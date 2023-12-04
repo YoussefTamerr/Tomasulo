@@ -4,6 +4,12 @@ const fs = require('fs');
 const filePath = 'C:/Users/moham/OneDrive/Desktop/Tomasulo/Instructions.txt';
 const instructionQueue=[];
 
+const pattern = /^\d+$/;
+
+function containsNumbersOnly(inputString) {
+  return pattern.test(inputString);
+}
+
 function capitalizeWord(word) {
   return word.toUpperCase();
 }
@@ -20,8 +26,17 @@ fs.promises.readFile(filePath, 'utf-8')
     const words = lines[i].split(/\s+|,/);
     words.splice(4,1);
 
- 
-if(words.length!=4){
+ console.log(lines[i]);
+ console.log(containsNumbersOnly(words[2]));
+console.log(words[0]==INST.LD)
+
+if((words[0]==INST.SD || words[0]==INST.LD) && (words.length!=3)){
+  throw new Error(`Line ${i+1}:Wrong instruction format for LD and SD`)
+}
+if((words[0]==INST.SD || words[0]==INST.LD) && (!containsNumbersOnly(words[2]))){
+  throw new Error(`Line ${i+1}:Wrong address format for LD and SD`)
+}
+if((words[0]!=INST.SD && words[0]!=INST.LD) && (words.length!=4)){
   throw new Error(`Line ${i+1}:Wrong instruction format`)
 }
     for(let j=0;j<words.length;j++){
@@ -33,7 +48,6 @@ if(words.length!=4){
     }
     instructionQueue.push(words);
     }
-
 
     console.log(instructionQueue);
     

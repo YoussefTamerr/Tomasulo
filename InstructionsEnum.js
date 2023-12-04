@@ -6,8 +6,8 @@ const instructions = {
     MUL: 'MUL',
     DIV: 'DIV',
     BNEZ: 'BNEZ',
-    LD:"L.D",
-    SD:"S.D"
+    LD:"LD",
+    SD:"SD"
   };
   
 module.exports= instructions;
