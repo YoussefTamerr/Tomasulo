@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "InstructionQueue.js",
+  "type": "module",  
   "scripts": {
-    "start":"InstructionQueue.js",
+    "start": "InstructionQueue.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

@@ -1,6 +1,6 @@
 import { constant } from "lodash";
 import {ReservationStation} from "./ReservationStation";
-import {RSinstructions} from "./RSinstructions";
+//import {RSinstructions} from "./RSinstructions";
 import {RegisterFile} from "./RegisterFile";
 import {LRUCache} from "./LRUCache";
 

@@ -126,7 +126,7 @@ class RegisterFile{
     }
      
 
-}
+}export default RegisterFile;
 
 // const RF=new RegisterFile()
 // RF.setF0(1.33);
