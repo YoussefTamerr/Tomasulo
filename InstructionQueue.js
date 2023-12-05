@@ -1,3 +1,4 @@
+
 const registers=require('./RegisterFile');
 const INST=require('./InstructionsEnum');
 const fs = require('fs');
@@ -26,15 +27,13 @@ fs.promises.readFile(filePath, 'utf-8')
     const words = lines[i].split(/\s+|,/);
     words.splice(4,1);
 
- console.log(lines[i]);
- console.log(containsNumbersOnly(words[2]));
-console.log(words[0]==INST.LD)
+
 
 if((words[0]==INST.SD || words[0]==INST.LD) && (words.length!=3)){
-  throw new Error(`Line ${i+1}:Wrong instruction format for LD and SD`)
+  throw new Error(`Line ${i+1}:Wrong instruction format for ${words[0]} instruction`)
 }
 if((words[0]==INST.SD || words[0]==INST.LD) && (!containsNumbersOnly(words[2]))){
-  throw new Error(`Line ${i+1}:Wrong address format for LD and SD`)
+  throw new Error(`Line ${i+1}:Wrong address format for ${words[0]} instruction`)
 }
 if((words[0]!=INST.SD && words[0]!=INST.LD) && (words.length!=4)){
   throw new Error(`Line ${i+1}:Wrong instruction format`)
