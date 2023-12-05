@@ -39,26 +39,26 @@ class RegisterFile{
 
 /////////////////Registers getters////////////////////////////////
 
-    getF0(num){
+    getF0(){
        return this.registers[1][0];
     }
-    getF1(num){
+    getF1(){
         return this.registers[1][1];
     }
-    getF2(num){
+    getF2(){
         return this.registers[1][2];
 
     }
-    getF3(num){
+    getF3(){
        return this.registers[1][3];
     }
-    getF4(num){
+    getF4(){
       return  this.registers[1][4];
     }
-    getF5(num){
+    getF5(){
         return this.registers[1][5];
     }
-    getF6(num){
+    getF6(){
         return this.registers[1][6];
     }
 
@@ -93,26 +93,26 @@ class RegisterFile{
 
 /////////Qi getters/////////////////////
 
-    getQ0(num){
+    getQ0(){
         return this.registers[0][0];
      }
-     getQ1(num){
+     getQ1(){
          return this.registers[0][1];
      }
-     getQ2(num){
+     getQ2(){
          return this.registers[0][2];
  
      }
-     getQ3(num){
+     getQ3(){
         return this.registers[0][3];
      }
-     getQ4(num){
+     getQ4(){
        return  this.registers[0][4];
      }
-     getQ5(num){
+     getQ5(){
          return this.registers[0][5];
      }
-     getQ6(num){
+     getQ6(){
          return this.registers[0][6];
      }
 
