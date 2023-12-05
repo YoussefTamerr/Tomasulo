@@ -34,3 +34,17 @@ class LRUCache {
     }
   }
   
+  // Example usage
+  /*const cache = new LRUCache(3); // Capacity is set to 3
+  
+  cache.put("A", 1);
+  cache.put("B", 2);
+  cache.put("C", 3);
+  cache.displayCache(); // Cache Contents: A: 1, B: 2, C: 3
+  
+  console.log(cache.get("A")); // 1
+  cache.displayCache(); // Cache Contents: B: 2, C: 3, A: 1
+  
+  cache.put("D", 4); // Evicts B as it was the least recently used
+  cache.displayCache();*/ // Cache Contents: C: 3, A: 1, D: 4 
+  

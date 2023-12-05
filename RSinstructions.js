@@ -13,6 +13,12 @@ class RSinstructions{
 
     Intializeinstruction(){
         this.RSinstructions.busy=0;
+        this.op=null;
+        this.vj=null;
+        this.vk=null;
+        this.qj=null;
+        this.qk=null;
+        this.A=null;
     }
 
 

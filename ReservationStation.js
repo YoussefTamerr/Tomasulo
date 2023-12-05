@@ -1,5 +1,4 @@
 
-import {instruction} from './RSinstructions';
 class  ReservationStation{
 
   
@@ -22,7 +21,7 @@ class  ReservationStation{
       }
 
       getInstruction(){
-        return this.instructions.shift();
+        return this.instructions.shift();   //mistake
       }
 }
 
