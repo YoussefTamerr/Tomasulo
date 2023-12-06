@@ -5,7 +5,7 @@ class ReservationStation{
         this.capacity=capacity;
         this.instructions=new Array(capacity);
         for (let i = 0; i < capacity; i++) {
-          this.instructions[i]=new RSinstructions(0,null,null,null,null,null,null)
+          this.instructions[i]=new RSinstructions(null,0,null,null,null,null,null,null)
           
         }
         //this.intializeEntries();
@@ -17,20 +17,18 @@ class ReservationStation{
         }
       }
   
-      addInstruction(i,op,vj,vk,qj,qk,A){
-          this.instructions[i].op=op;
-          this.instructions[i].vj=vj;
-          this.instructions[i].vk=vk;
-          this.instructions[i].qj=qj;
-          this.instructions[i].qk=qk;
-          this.instructions[i].A=A;
+      addInstruction(tag,op,vj,vk,qj,qk,A){
+      const inst=new RSinstructions(tag,1,op,vj,vk,qj,qk,A);
+      this.instructions.push()
       }
 
       getInstruction(i){
         return this.instructions[i];
       }
       removeInstruction(i){
-        this.instructions[i].Intializeinstruction();
+        const emp=new RSinstructions(null,0,null,null,null,null,null,null);
+        this.instructions.shift();
+        this.instructions.push(emp)
       }
       displayRS(){
         for (let i = 0; i < this.capacity; i++) {
@@ -42,10 +40,10 @@ class ReservationStation{
       }
     
     }
-const Rs=new ReservationStation(3);
-Rs.displayRS();
+// const Rs=new ReservationStation(3);
+// Rs.displayRS();
 
 
 
 
-//export default ReservationStation;
+export default ReservationStation;

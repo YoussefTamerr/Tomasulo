@@ -1,5 +1,6 @@
 class RSinstructions{
-    constructor(busy,op,vj,vk,qj,qk,A){
+    constructor(tag,busy,op,vj,vk,qj,qk,A){
+        this.tag=tag;
         this.busy=busy;
         this.op=op;
         this.vj=vj;
@@ -11,6 +12,7 @@ class RSinstructions{
     }
 
     Intializeinstruction(){
+        this.tag=null;
         this.busy=0;
         this.op=null;
         this.vj=null;
@@ -21,7 +23,7 @@ class RSinstructions{
     }
 
     displayInstruction(){
-        console.log("Busy: "+this.busy+"| Op: "+this.op+"| Vj: "+this.vj+"| Vk: "+this.vk+"| Qj: "+this.qj+"| Qk: "+this.qk+"| A:"+this.A)
+        console.log("tag: "+this.tag+"| Busy: "+this.busy+"| Op: "+this.op+"| Vj: "+this.vj+"| Vk: "+this.vk+"| Qj: "+this.qj+"| Qk: "+this.qk+"| A:"+this.A)
     }
 
 

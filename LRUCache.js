@@ -32,7 +32,7 @@ class LRUCache {
         console.log(`${key}: ${value}`);
       }
     }
-  }
+  } export default LRUCache;
   
   // Example usage
   /*const cache = new LRUCache(3); // Capacity is set to 3

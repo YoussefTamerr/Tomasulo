@@ -13,3 +13,7 @@ const LoadBuffer=new ReservationStation(4);
 const adderRS=new ReservationStation(4);
 const multRS=new ReservationStation(2);
 
+const pc=0;
+const clock=0;
+
+StoreBuffer.a
