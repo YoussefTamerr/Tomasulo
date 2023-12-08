@@ -1,6 +1,6 @@
 class RegisterFile{
     constructor(){
-    this.registers=new Array(2).fill(null).map(() => new Array(7).fill(null));
+    this.registers=new Array(2).fill(null).map(() => new Array(64).fill(0));
     this.IntializeQ()
     }
 
@@ -118,9 +118,14 @@ class RegisterFile{
 
      displayRF(){
         console.log(" Qi    "+"Ri    ")
-        for (let i = 0;i<7; i++) {
+        for (let i = 0;i<this.registers[0].length; i++) {
             
-                console.log("  "+this.registers[0][i]+" | "+this.registers[1][i])
+                
+                if(i > 31) {
+                    console.log("R"+(i-32)+": "+this.registers[0][i]+" | "+this.registers[1][i])
+                } else {
+                    console.log("F"+i+": "+this.registers[0][i]+" | "+this.registers[1][i])
+                }
         
         }
     }

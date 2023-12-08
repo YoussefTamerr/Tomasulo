@@ -1,3 +1,2 @@
-aDd f3,f6,f2
-SUB f6,f6,f0
-LD f6,100
+add R0,R1,R2
+sub r3,r4,r5
