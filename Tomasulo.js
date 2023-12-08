@@ -97,9 +97,26 @@ if((words[0]!=INST.SD && words[0]!=INST.LD) ){
     
     }
 
-   // console.log(instructionQueue);
+    console.log(instructionQueue);
     
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     
   })

@@ -48,7 +48,7 @@ class ReservationStation{
       getInstruction(i){
         return this.instructions[i];
       }
-      removeInstruction(i){  //remove on tag
+      removeInstruction(i){  //remove on tag//
         const emp=new RSinstructions(null,0,null,null,null,null,null,null);
         this.instructions.splice(i,1);
         this.instructions[i]=emp;
