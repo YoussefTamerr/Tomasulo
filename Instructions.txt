@@ -1,2 +1,4 @@
-add R0,R1,R2
-sub r3,r4,r5
+ADDI F0,F0,2
+SUBI F0,F0,1
+BNEZ F0,2
+ADDI F1,F1,1

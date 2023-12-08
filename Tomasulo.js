@@ -13,7 +13,8 @@ const StoreBuffer=new ReservationStation(4);
 const LoadBuffer=new ReservationStation(3);
 const adderRS=new ReservationStation(3);
 const multRS=new ReservationStation(2);
-const instructionQueue=[];
+let instructionQueue=[];
+let instructionQueue2=[];
 let bus = [];
 
 const addLatency =2;
@@ -106,6 +107,9 @@ const fillRSInstALU = (currentInst, index) => {
   let r1 = currentInst[2];
   let r2 = currentInst[3];
   let dest = currentInst[1];
+  if (currentInst[0] == 'BNEZ') {
+    r1 = currentInst[1];
+  }
 
   let vj = null;
   let vk = null;
@@ -115,12 +119,15 @@ const fillRSInstALU = (currentInst, index) => {
 
   let letter;
 
-  if(currentInst[0] == 'ADD' || currentInst[0] == 'SUB') {
+  if(currentInst[0] == 'ADD' || currentInst[0] == 'SUB' || currentInst[0] == 'ADDI' || currentInst[0] == 'SUBI' || currentInst[0] == 'BNEZ') {
     letter = 'A';
   } else if(currentInst[0] == 'MUL' || currentInst[0] == 'DIV') {
     letter = 'M';
   }
 
+  if (currentInst[0] == 'ADDI' || currentInst[0] == 'SUBI' || currentInst[0] == 'BNEZ') {
+    time = 1
+  }
   if(currentInst[0] == 'ADD') {
     time = addLatency;
   } else if(currentInst[0] == 'SUB') {
@@ -149,15 +156,21 @@ const fillRSInstALU = (currentInst, index) => {
   } else {
     qj = File.registers[0][(r1[1]+ (r1[2] || '')) * 1]; 
   }
-
-  if(File.registers[0][(r2[1]+ (r2[2] || '')) * 1] == 0) {
-    vk = File.registers[1][(r2[1]+ (r2[2] || '')) * 1];
-  } else {
-    qk = File.registers[0][(r2[1]+ (r2[2] || '')) * 1]
+  if (currentInst[0] != 'ADDI' && currentInst[0] != 'SUBI' && currentInst[0] != 'BNEZ') {
+        if(File.registers[0][(r2[1]+ (r2[2] || '')) * 1] == 0) {
+            vk = File.registers[1][(r2[1]+ (r2[2] || '')) * 1];
+        } else {
+            qk = File.registers[0][(r2[1]+ (r2[2] || '')) * 1]
+        }
+    }else {
+        if (currentInst[0] != 'BNEZ')
+            vk = currentInst[3] * 1;
+        else
+            vk = currentInst[2] * 1; 
+    }
+  if (!(currentInst[0] == 'BNEZ')) {
+    File.registers[0][(dest[1]+ (dest[2] || '')) * 1] = letter + '' +index;
   }
-
-  File.registers[0][(dest[1]+ (dest[2] || '')) * 1] = letter + '' +index;
-
 
   return new RSinstructions(letter + '' +index, 1, currentInst[0], vj, vk, qj, qk, null, time);
 }
@@ -232,17 +245,41 @@ if((words[0]!=INST.SD && words[0]!=INST.LD) ){
       S2 = 'F'+x;
       words[3]=S2;  
     }
-    if(S1.length>3 || S2.length>3 || D.length>3){
-      throw new Error(`Line ${i+1}:Wrong memory format`)
-    }
-    if(S1[0].toUpperCase()!='F' || S2[0].toUpperCase()!='F'|| D[0].toUpperCase()!='F'){
-      throw new Error(`Line ${i+1}:Wrong memory format only F`)
-    }
-    if((Number(S1[2])<0 || Number(S1[1]>63)) || (Number(S2[2])<0 || Number(S2[1]>63)) || (Number(D[2])<0 || Number(D[1]>63)) ){
-      throw new Error(`Line ${i+1}:in available memory [F0-F31]`)
+    if (words[0] != 'ADDI' && words[0] != 'SUBI' && words[0] != 'BNEZ') {
+        if(S1.length>3 || S2.length>3 || D.length>3){
+        throw new Error(`Line ${i+1}:Wrong memory format`)
+        }
+        if(S1[0].toUpperCase()!='F' || S2[0].toUpperCase()!='F'|| D[0].toUpperCase()!='F'){
+        throw new Error(`Line ${i+1}:Wrong memory format only F`)
+        }
+        if((Number(S1[2])<0 || Number(S1[1]>63)) || (Number(S2[2])<0 || Number(S2[1]>63)) || (Number(D[2])<0 || Number(D[1]>63)) ){
+        throw new Error(`Line ${i+1}:in available memory [F0-F31]`)
+        }
+    }else {
+        if (words[0] === 'BNEZ'){
+            if(D.length>3){
+            throw new Error(`Line ${i+1}:Wrong memory format`)
+            }
+            if(D[0].toUpperCase()!='F'){
+            throw new Error(`Line ${i+1}:Wrong memory format only F`)
+            }
+            if((Number(D[2])<0 || Number(D[1]>63)) ){
+            throw new Error(`Line ${i+1}:in available memory [F0-F31]`)
+            }
+        }
+        else {
+            if(S1.length>3 || D.length>3){
+            throw new Error(`Line ${i+1}:Wrong memory format`)
+            }
+            if(S1[0].toUpperCase()!='F' || D[0].toUpperCase()!='F'){
+            throw new Error(`Line ${i+1}:Wrong memory format only F`)
+            }
+            if((Number(S1[2])<0 || Number(S1[1]>63)) ||(Number(D[2])<0 || Number(D[1]>63)) ){
+            throw new Error(`Line ${i+1}:in available memory [F0-F31]`)
+            }
+        }
     }
   }
-
 
 }
     for(let j=0;j<words.length;j++){
@@ -259,12 +296,13 @@ if((words[0]!=INST.SD && words[0]!=INST.LD) ){
 
 
     instructionQueue.push(words);
-    
+    instructionQueue2.push(words);
     }
+
     insertToDataCache('100', 6);
     insertToDataCache('200', 3);
 
-    insertToRF(0, 4);
+    insertToRF(0, 0);
     insertToRF(1, 5);
     insertToRF(2, 6);
     insertToRF(3, 7);
@@ -285,8 +323,17 @@ if((words[0]!=INST.SD && words[0]!=INST.LD) ){
       let dontIssueLoad = false;
       let dontIssueStore = false;
 
+      for(let i = 0; i < adderRS.capacity; i++) {
+        if(adderRS.instructions[i].busy == 1 && adderRS.instructions[i].op == 'BNEZ') {
+          dontIssueAdd = true;
+          dontIssueMult = true;
+          dontIssueLoad = true;
+          dontIssueStore = true;
+        }
+      }
+
       if(currentInst) {
-        if((currentInst[0] == 'ADD' || currentInst[0] == 'SUB') && adderRS.isFull()) {
+        if((currentInst[0] == 'ADD' || currentInst[0] == 'SUB' || currentInst[0] == 'ADDI' || currentInst[0] == 'SUBI' || currentInst[0] == 'BNEZ') && adderRS.isFull()) {
           dontIssueAdd = true;      
         }
         if((currentInst[0] == 'MUL' || currentInst[0] == 'DIV') && multRS.isFull()) {
@@ -341,7 +388,7 @@ if((words[0]!=INST.SD && words[0]!=INST.LD) ){
           }
         }
   
-        if((currentInst[0] == 'ADD' || currentInst[0] == 'SUB') && !dontIssueAdd) {
+        if((currentInst[0] == 'ADD' || currentInst[0] == 'SUB' || currentInst[0] == 'ADDI' || currentInst[0] == 'SUBI' || currentInst[0] == 'BNEZ') && !dontIssueAdd) {
           for(let i = 0; i < adderRS.capacity; i++) {
             if(adderRS.instructions[i].busy == 0) {
               adderRS.instructions[i] = fillRSInstALU(currentInst, i);
@@ -404,10 +451,15 @@ if((words[0]!=INST.SD && words[0]!=INST.LD) ){
           //File.registers[1][adderRS.instructions[i].tag[1] * 1] = adderRS.instructions[i].A;
           //File.registers[0][adderRS.instructions[i].tag[1] * 1] = 0;
           let value;
-          if(adderRS.instructions[i].op == 'ADD') {
+          if(adderRS.instructions[i].op == 'ADD' || adderRS.instructions[i].op == 'ADDI') {
             value = adderRS.instructions[i].vj + adderRS.instructions[i].vk;
-          } else if(adderRS.instructions[i].op == 'SUB') {
+          } else if(adderRS.instructions[i].op == 'SUB' || adderRS.instructions[i].op == 'SUBI') {
             value = adderRS.instructions[i].vj - adderRS.instructions[i].vk;
+          }else {
+            if(adderRS.instructions[i].vj != 0){
+                instructionQueue = []
+                instructionQueue = instructionQueue2.slice(adderRS.instructions[i].vk - 1)
+            }
           }
           bus.push( { tag: adderRS.instructions[i].tag, value } )
           adderRS.instructions[i].busy = 0;
@@ -513,7 +565,6 @@ if((words[0]!=INST.SD && words[0]!=INST.LD) ){
         }
         bus.shift();
       }
-      
       console.log('Clock: ', clock);
       console.log('adder rs: ');
       adderRS.displayRS();
