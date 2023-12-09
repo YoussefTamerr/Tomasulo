@@ -17,9 +17,9 @@ let instructionQueue=[];
 let instructionQueue2=[];
 let bus = [];
 
-const addLatency =2;
+const addLatency =4;
 const subLatency =2;
-const multLatency =10;
+const multLatency =6;
 const divLatency =40;
 const loadLatency =2;
 const storeLatency =2;
@@ -99,7 +99,7 @@ const fillRSInstMem = (currentInst, index) => {
   File.registers[0][(r1[1]+ (r1[2] || '')) * 1] = letter + '' +index;
 
 
-  return new RSinstructions(letter + '' +index, 1, address, vj, null, qj, null, null, time);
+  return new RSinstructions(letter + '' +index, 1, address, vj, null, qj, null, currentInst, time);
 }
 
 const fillRSInstALU = (currentInst, index) => {
@@ -172,7 +172,7 @@ const fillRSInstALU = (currentInst, index) => {
     File.registers[0][(dest[1]+ (dest[2] || '')) * 1] = letter + '' +index;
   }
 
-  return new RSinstructions(letter + '' +index, 1, currentInst[0], vj, vk, qj, qk, null, time);
+  return new RSinstructions(letter + '' +index, 1, currentInst[0], vj, vk, qj, qk, currentInst, time);
 }
 
 const INST = {
@@ -222,8 +222,9 @@ if((words[0]==INST.SD || words[0]==INST.LD) && (words.length!=3)){
 if((words[0]==INST.SD || words[0]==INST.LD) && (!containsNumbersOnly(words[2]))){
   throw new Error(`Line ${i+1}:Wrong address format for ${words[0]} instruction`)
 }
-if((words[0]!=INST.SD && words[0]!=INST.LD) ){
+if((words[0]!=INST.SD && words[0]!=INST.LD && words[0] != INST.BNEZ) ){
   if(words.length!=4){
+    console.log(words.length)
   throw new Error(`Line ${i+1}:Wrong instruction format`)
   }else{
    
@@ -324,7 +325,21 @@ if((words[0]!=INST.SD && words[0]!=INST.LD) ){
       let dontIssueStore = false;
 
       for(let i = 0; i < adderRS.capacity; i++) {
-        if(adderRS.instructions[i].busy == 1 && adderRS.instructions[i].op == 'BNEZ') {
+        if(adderRS.instructions[i].busy == 1 && adderRS.instructions[i].op == 'BNEZ' && adderRS.instructions[i].timeLeft == 0) {
+          if(adderRS.instructions[i].vj != 0){
+            instructionQueue = []
+            instructionQueue = instructionQueue2.slice(adderRS.instructions[i].vk - 1)
+            currentInst = instructionQueue[0];
+          }
+          adderRS.instructions[i].busy = 0;
+          adderRS.instructions[i].op = null;
+          adderRS.instructions[i].vj = null;
+          adderRS.instructions[i].vk = null;
+          adderRS.instructions[i].qj = null;
+          adderRS.instructions[i].qk = null;
+          adderRS.instructions[i].A = null;
+          adderRS.instructions[i].timeLeft = null;
+        } else if(adderRS.instructions[i].busy == 1 && adderRS.instructions[i].op == 'BNEZ' && adderRS.instructions[i].timeLeft > 0) {
           dontIssueAdd = true;
           dontIssueMult = true;
           dontIssueLoad = true;
@@ -456,12 +471,13 @@ if((words[0]!=INST.SD && words[0]!=INST.LD) ){
           } else if(adderRS.instructions[i].op == 'SUB' || adderRS.instructions[i].op == 'SUBI') {
             value = adderRS.instructions[i].vj - adderRS.instructions[i].vk;
           }else {
-            if(adderRS.instructions[i].vj != 0){
-                instructionQueue = []
-                instructionQueue = instructionQueue2.slice(adderRS.instructions[i].vk - 1)
-            }
+            // if(adderRS.instructions[i].vj != 0){
+            //     instructionQueue = []
+            //     instructionQueue = instructionQueue2.slice(adderRS.instructions[i].vk - 1)
+            // }
           }
-          bus.push( { tag: adderRS.instructions[i].tag, value } )
+
+          bus.push( { tag: adderRS.instructions[i].tag, value, inst:adderRS.instructions[i].A } )
           adderRS.instructions[i].busy = 0;
           adderRS.instructions[i].op = null;
           adderRS.instructions[i].vj = null;
@@ -482,7 +498,7 @@ if((words[0]!=INST.SD && words[0]!=INST.LD) ){
           } else if(multRS.instructions[i].op == 'DIV') {
             value = multRS.instructions[i].vj / multRS.instructions[i].vk;
           }
-          bus.push( { tag: multRS.instructions[i].tag, value } )
+          bus.push( { tag: multRS.instructions[i].tag, value, inst:multRS.instructions[i].A } )
           multRS.instructions[i].busy = 0;
           multRS.instructions[i].op = null;
           multRS.instructions[i].vj = null;
@@ -498,7 +514,7 @@ if((words[0]!=INST.SD && words[0]!=INST.LD) ){
           //File.registers[1][LoadBuffer.instructions[i].tag[1] * 1] = DataCache.get(LoadBuffer.instructions[i].A);
           //File.registers[0][LoadBuffer.instructions[i].tag[1] * 1] = 0;
           let value = DataCache.get(LoadBuffer.instructions[i].op);
-          bus.push( { tag: LoadBuffer.instructions[i].tag, value } )
+          bus.push( { tag: LoadBuffer.instructions[i].tag, value, inst:LoadBuffer.instructions[i].A } )
           LoadBuffer.instructions[i].busy = 0;
           LoadBuffer.instructions[i].op = null;
           LoadBuffer.instructions[i].vj = null;
@@ -524,6 +540,12 @@ if((words[0]!=INST.SD && words[0]!=INST.LD) ){
       }
       
       //bus handle
+      bus.sort((a, b) => {
+        const indexA = instructionQueue2.indexOf(a.inst);
+        const indexB = instructionQueue2.indexOf(b.inst);
+        return indexA - indexB;
+      });
+      console.log(bus);
       if(bus.length > 0) {
         for(let j = 0; j < adderRS.capacity; j++) {
           if(adderRS.instructions[j].busy == 1 && adderRS.instructions[j].qj == bus[0].tag) {
@@ -565,6 +587,7 @@ if((words[0]!=INST.SD && words[0]!=INST.LD) ){
         }
         bus.shift();
       }
+     //if(clock < 15) {
       console.log('Clock: ', clock);
       console.log('adder rs: ');
       adderRS.displayRS();
@@ -578,6 +601,7 @@ if((words[0]!=INST.SD && words[0]!=INST.LD) ){
       File.displayRF();
       console.log('Data Cache: ');
       DataCache.displayCache();
+     //}
       clock += 1;
       if(!(dontIssueAdd || dontIssueMult || dontIssueLoad || dontIssueStore)) {
         instructionQueue.shift();
