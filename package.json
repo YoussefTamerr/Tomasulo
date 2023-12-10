@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "InstructionQueue.js",
-  "type": "module",  
+  "type": "module",
   "scripts": {
     "start": "InstructionQueue.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,6 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "fs.promises": "^0.1.2",
     "lodash": "^4.17.21"
   }
 }

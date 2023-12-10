@@ -1,3 +1,5 @@
+
+
 import fs from 'fs';
 import ReservationStation from "./ReservationStation.js";
 import RSinstructions from "./RSinstructions.js";
@@ -587,29 +589,10 @@ if((words[0]!=INST.SD && words[0]!=INST.LD) ){
         break;
       }
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
     
   })
   .catch(error => {
     console.error(error);
   });
 
+ 
