@@ -1,8 +1,8 @@
 import fs from 'fs';
-import ReservationStation from "./ReservationStation.js";
-import RSinstructions from "./RSinstructions.js";
-import RegisterFile from "./RegisterFile.js";
-import LRUCache from "./LRUCache.js";
+import ReservationStation from "./tomasulo/ReservationStation.js";
+import RSinstructions from "./tomasulo/RSinstructions.js";
+import RegisterFile from "./tomasulo/RegisterFile.js";
+import LRUCache from "./tomasulo/LRUCache.js";
 
 //Components//
 //import InstructionQueue from './InstructionQueue.js';
